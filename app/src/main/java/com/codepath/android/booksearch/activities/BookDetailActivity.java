@@ -28,6 +28,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 
 public class BookDetailActivity extends ActionBarActivity {
+
     private ImageView ivBookCover;
     private TextView tvTitle;
     private TextView tvAuthor;
@@ -35,11 +36,11 @@ public class BookDetailActivity extends ActionBarActivity {
     private ShareActionProvider miShareAction;
     private ProgressBar pb;
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_book_detail);
+        Log.i("DEBUG", "onCreate");
         // Fetch views
         ivBookCover = (ImageView) findViewById(R.id.ivBookCover);
         tvTitle = (TextView) findViewById(R.id.tvTitle);
@@ -52,23 +53,6 @@ public class BookDetailActivity extends ActionBarActivity {
 
         pb = (ProgressBar) findViewById(R.id.pbLoading);
         showProgressBar();
-
-        // Use book object to populate data into views
-        ImageView ivBookCover = (ImageView) findViewById(R.id.ivBookCover);
-        Log.i("DEBUG", "Load Image");
-        Picasso.with(this).load(result.getLargeCoverUrl()).into(ivBookCover, new Callback(){
-
-            @Override
-            public void onSuccess() {
-                setupShareIntent();
-                hideProgressBar();
-            }
-
-            @Override
-            public void onError() {
-
-            }
-        });
 
         TextView tvTitle = (TextView) findViewById(R.id.tvTitle);
         tvTitle.setText(result.getTitle());
@@ -122,7 +106,27 @@ public class BookDetailActivity extends ActionBarActivity {
         Log.i("DEBUG", "Create menu");
         MenuItem shareItem = (MenuItem) menu.findItem(R.id.menu_item_share);
         miShareAction = (ShareActionProvider) MenuItemCompat.getActionProvider(shareItem);
+        loadImage();
         return true;
+    }
+
+    private void loadImage() {
+        // Use book object to populate data into views
+        ImageView ivBookCover = (ImageView) findViewById(R.id.ivBookCover);
+        Log.i("DEBUG", "Load Image");
+        Picasso.with(this).load(result.getLargeCoverUrl()).into(ivBookCover, new Callback(){
+
+            @Override
+            public void onSuccess() {
+                setupShareIntent();
+                hideProgressBar();
+            }
+
+            @Override
+            public void onError() {
+
+            }
+        });
     }
 
     @Override
@@ -131,7 +135,6 @@ public class BookDetailActivity extends ActionBarActivity {
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
-
         return super.onOptionsItemSelected(item);
     }
 
@@ -147,4 +150,5 @@ public class BookDetailActivity extends ActionBarActivity {
         // Attach share event to the menu item provider
         miShareAction.setShareIntent(shareIntent);
     }
+
 }
